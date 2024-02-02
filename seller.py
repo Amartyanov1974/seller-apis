@@ -12,7 +12,10 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(last_id, client_id, seller_token):
-    """Получить список товаров магазина озон"""
+    """Получить список товаров магазина озон
+
+
+    """
     url = "https://api-seller.ozon.ru/v2/product/list"
     headers = {
         "Client-Id": client_id,
@@ -143,7 +146,7 @@ def price_conversion(price: str) -> str:
         str: Преобразованная цена.
 
     Пример:
-        >>> price="5'990.00 руб."
+        >>> price = "5'990.00 руб."
         >>> price_conversion(price)
         >>> '5990'
 
@@ -152,7 +155,7 @@ def price_conversion(price: str) -> str:
             будут объекты, не являющиеся строкой).
 
     Пример:
-        >>> price=5990
+        >>> price = 5990
         >>> price_conversion(price)
         >>> AttributeError: 'int' object has no attribute 'split'
 
@@ -161,9 +164,22 @@ def price_conversion(price: str) -> str:
 
 
 def divide(lst: list, n: int):
-    """Разделить список lst на части по n элементов
+    """Создаем генератор.
 
+    Выдаем по n элементов из списока lst.
 
+    Args:
+        lst (list): список товаров.
+        n (int):    количество элементов в группе
+
+    Return:
+        list: Группа товаров.
+
+    Пример:
+        >>> lst = [1, 2, 3, 4, 5]
+        >>> n = 2
+        >>> list(divide(lst, n))
+        >>> [[1, 2], [3, 4], [5]]
     """
 
     for i in range(0, len(lst), n):
