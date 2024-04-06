@@ -85,6 +85,7 @@ def get_offer_ids(client_id, seller_token):
         AttributeError: 'NoneType' object has no attribute 'get'
         если функция get_product_list вернет None, из-за отсутствия
         ответа сервера по какой либо причине
+
     Пример:
         >>> get_offer_ids(client_id, seller_token)
         >>> AttributeError: 'NoneType' object has no attribute 'get'
@@ -149,6 +150,7 @@ def download_stock():
     Raises:
         XLRDError('Unsupported format, or corrupt file')
         если целостность файла excel в архиве будет повреждена
+
     Пример:
         >>> download_stock()
         >>> xlrd.biffh.XLRDError: Unsupported format, or corrupt file: Expected BOF record; found b'deb http'
@@ -168,6 +170,35 @@ def download_stock():
 
 
 def create_stocks(watch_remnants, offer_ids):
+    """Актуализируем остатки товара
+
+    Оставляем в списке товара только те позиции, которые присутствуют
+    в магазине Озон и добавляем отсутствующие позиции в остатки из
+    имеющихся в магазине Озон.
+
+    Args:
+        watch_remnants (list): остатки товара в магазине часов
+        offer_ids (list): список товара в магазине Озон
+
+    Return:
+        list: Актуализированные остатки товара.
+
+    Пример:
+        >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 2, 'Заказ': ''}]
+        >>> offer_ids = [{"product_id": "223681945", "offer_id": "136748"}, {"product_id": "223681946", "offer_id": "73309"}]
+        >>> create_stocks(watch_remnants, offer_ids)
+        >>> [{"offer_id": "136748", "stock": 0}, {"offer_id": "73309", "stock": 2}]
+
+    Raises:
+        ValueError: Если в "Количестве" будут не только цифры
+
+    Пример:
+        >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': '2O', 'Заказ': ''}]
+        >>> offer_ids = [{"product_id": "223681945", "offer_id": "136748"}, {"product_id": "223681946", "offer_id": "73309"}]
+        >>> create_stocks(watch_remnants, offer_ids)
+        >>> ValueError: invalid literal for int() with base 10: '2O'
+
+    """
     # Уберем то, что не загружено в seller
     stocks = []
     for watch in watch_remnants:
