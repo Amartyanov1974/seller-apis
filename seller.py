@@ -131,7 +131,28 @@ def update_stocks(stocks: list, client_id, seller_token):
 
 
 def download_stock():
-    """Скачать файл ostatki с сайта casio"""
+    """Получаем остатки товара
+
+    Скачиваем архив с файлом excel из которого извлекаем с помощью
+    библиотеки pandas остатки товара.
+
+    Args:
+        Нет
+
+    Return:
+        list: Остатки товара.
+
+    Пример:
+        >>> download_stock()
+        >>> [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 1, 'Заказ': ''}]
+
+    Raises:
+        XLRDError('Unsupported format, or corrupt file')
+        если целостность файла excel в архиве будет повреждена
+    Пример:
+        >>> download_stock()
+        >>> xlrd.biffh.XLRDError: Unsupported format, or corrupt file: Expected BOF record; found b'deb http'
+    """
     # Скачать остатки с сайта
     casio_url = "https://timeworld.ru/upload/files/ostatki.zip"
     session = requests.Session()
@@ -141,12 +162,7 @@ def download_stock():
         archive.extractall(".")
     # Создаем список остатков часов:
     excel_file = "ostatki.xls"
-    watch_remnants = pd.read_excel(
-        io=excel_file,
-        na_values=None,
-        keep_default_na=False,
-        header=17,
-    ).to_dict(orient="records")
+    watch_remnants = pd.read_excel(io=excel_file,na_values=None,keep_default_na=False,header=17,).to_dict(orient="records")
     os.remove("./ostatki.xls")  # Удалить файл
     return watch_remnants
 
