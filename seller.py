@@ -12,9 +12,37 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(last_id, client_id, seller_token):
-    """Получить список товаров магазина озон
+    """Получение списка товаров
 
+    Используя методы Seller API магазина Озон получаем список товаров
 
+    Args:
+        last_id (str): идентификатор последнего значения на странице.
+        client_id (str): идентификатор клиента.
+        seller_token (str): API-ключ.
+
+    Return:
+        dict: Список товаров:  .
+
+    Пример:
+        >>> get_product_list(last_id, client_id, seller_token)
+        >>> {
+        >>>     "items":
+        >>>         [
+        >>>             {
+        >>>                 "product_id": 223681945,
+        >>>                 "offer_id": "136748"
+        >>>             }
+        >>>         ],
+        >>>     "total": 1,
+        >>>     "last_id": "bnVсbA=="
+        >>> }
+
+    Raises:
+        HTTPError: 404 (если сервер будет недоступен).
+    Пример:
+        >>> get_product_list(last_id, client_id, seller_token)
+        >>> None
     """
     url = "https://api-seller.ozon.ru/v2/product/list"
     headers = {
