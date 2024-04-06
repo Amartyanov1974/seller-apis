@@ -44,7 +44,7 @@ def get_product_list(last_id, client_id, seller_token):
         HTTPError: 404 (если сервер будет недоступен).
     Пример:
         >>> get_product_list(last_id, client_id, seller_token)
-        >>> None
+        >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://api-seller.ozon.ru/v2/product/list
     """
     url = "https://api-seller.ozon.ru/v2/product/list"
     headers = {
@@ -83,8 +83,7 @@ def get_offer_ids(client_id, seller_token):
 
     Raises:
         AttributeError: 'NoneType' object has no attribute 'get'
-        если функция get_product_list вернет None, из-за отсутствия
-        ответа сервера по какой либо причине
+        если функция get_product_list вернет None
 
     Пример:
         >>> get_offer_ids(client_id, seller_token)
@@ -145,7 +144,7 @@ def download_stock():
 
     Пример:
         >>> download_stock()
-        >>> [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 1, 'Заказ': ''}]
+        >>> [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 2, 'Заказ': ''}]
 
     Raises:
         XLRDError('Unsupported format, or corrupt file')
