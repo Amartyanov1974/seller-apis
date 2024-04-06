@@ -15,14 +15,16 @@ def get_product_list(last_id, client_id, seller_token):
     """Получение списка товаров
 
     Используя методы Seller API магазина Озон получаем список товаров
+    в формате словаря по 1000 позиций максимум.
 
     Args:
-        last_id (str): идентификатор последнего значения на странице.
+        last_id (str): идентификатор последнего значения на странице,
+                       будет пустым, если запрос был первым.
         client_id (str): идентификатор клиента.
         seller_token (str): API-ключ.
 
     Return:
-        dict: Список товаров:  .
+        dict: Список товаров.
 
     Пример:
         >>> get_product_list(last_id, client_id, seller_token)
@@ -63,7 +65,30 @@ def get_product_list(last_id, client_id, seller_token):
 
 
 def get_offer_ids(client_id, seller_token):
-    """Получить артикулы товаров магазина озон"""
+    """Получить артикулы товаров магазина озон
+
+    Из списка товаров извлечь артикулы товара - идентификаторы товара
+    в системе продавца.
+
+    Args:
+        client_id (str): идентификатор клиента.
+        seller_token (str): API-ключ.
+
+    Return:
+        list: Список товаров.
+
+    Пример:
+        >>> get_offer_ids(client_id, seller_token)
+        >>> [{"product_id": "223681945", "offer_id": "136748"}]
+
+    Raises:
+        AttributeError: 'NoneType' object has no attribute 'get'
+        если функция get_product_list вернет None, из-за отсутствия
+        ответа сервера по какой либо причине
+    Пример:
+        >>> get_offer_ids(client_id, seller_token)
+        >>> AttributeError: 'NoneType' object has no attribute 'get'
+    """
     last_id = ""
     product_list = []
     while True:
