@@ -118,7 +118,40 @@ def update_price(prices: list, client_id, seller_token):
 
 
 def update_stocks(stocks: list, client_id, seller_token):
-    """Обновить остатки"""
+    """Обновляем остатки в магазине Озон
+
+    Используя методы Seller API магазина Озон обновляем информацию
+    о количестве товара в наличии. За один запрос можно изменить
+    наличие для 100 товаров.
+
+    Args:
+        stocks (list): список количества остатков.
+        client_id (str): идентификатор клиента.
+        seller_token (str): API-ключ.
+
+    Return:
+        dict: Словарь с результатами обновления.
+
+    Пример:
+        >>> update_stocks(stocks: list, client_id, seller_token)
+        >>> {
+        >>>     "result": [
+        >>>         {
+        >>>             "product_id": 55946,
+        >>>             "offer_id": "PG-2404С1",
+        >>>             "updated": true,
+        >>>             "errors": [ ]
+        >>>         }
+        >>>     ]
+        >>> }
+
+    Raises:
+        HTTPError: 404 (если сервер будет недоступен).
+    Пример:
+        >>> update_stocks(stocks: list, client_id, seller_token)
+        >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://api-seller.ozon.ru/v1/product/import/stocks
+
+    """
     url = "https://api-seller.ozon.ru/v1/product/import/stocks"
     headers = {
         "Client-Id": client_id,
