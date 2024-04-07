@@ -79,7 +79,7 @@ def get_offer_ids(client_id, seller_token):
 
     Пример:
         >>> get_offer_ids(client_id, seller_token)
-        >>> [{"product_id": "223681945", "offer_id": "136748"}]
+        >>> ["136748"]
 
     Raises:
         AttributeError: 'NoneType' object has no attribute 'get'
@@ -105,7 +105,40 @@ def get_offer_ids(client_id, seller_token):
 
 
 def update_price(prices: list, client_id, seller_token):
-    """Обновить цены товаров"""
+    """Обновляем стоимость товаров
+
+    Используя методы Seller API магазина Озон обновляем информацию
+    о стоимости товара. За один запрос можно изменить
+    стоимость для 1000 товаров.
+
+    Args:
+        prices (list): список количества остатков.
+        client_id (str): идентификатор клиента.
+        seller_token (str): API-ключ.
+
+    Return:
+        dict: Словарь с результатами обновления.
+
+    Пример:
+        >>> update_stocks(stocks: list, client_id, seller_token)
+        >>> {
+        >>>     "prices": [
+        >>>         {
+        >>>             "product_id": 1386,
+        >>>             "offer_id": "PH8865",
+        >>>             "updated": true,
+        >>>             "errors": [ ]
+        >>>         }
+        >>>     ]
+        >>> }
+
+    Raises:
+        HTTPError: 404 (если сервер будет недоступен).
+    Пример:
+        >>> update_stocks(stocks: list, client_id, seller_token)
+        >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://api-seller.ozon.ru/v1/product/import/prices
+
+    """
     url = "https://api-seller.ozon.ru/v1/product/import/prices"
     headers = {
         "Client-Id": client_id,
@@ -133,12 +166,13 @@ def update_stocks(stocks: list, client_id, seller_token):
         dict: Словарь с результатами обновления.
 
     Пример:
+        >>> stocks = [{"offer_id": "73309", "stock": 2}]
         >>> update_stocks(stocks: list, client_id, seller_token)
         >>> {
         >>>     "result": [
         >>>         {
         >>>             "product_id": 55946,
-        >>>             "offer_id": "PG-2404С1",
+        >>>             "offer_id": "73309",
         >>>             "updated": true,
         >>>             "errors": [ ]
         >>>         }
@@ -217,7 +251,7 @@ def create_stocks(watch_remnants, offer_ids):
 
     Пример:
         >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 2, 'Заказ': ''}]
-        >>> offer_ids = [{"product_id": "223681945", "offer_id": "136748"}, {"product_id": "223681946", "offer_id": "73309"}]
+        >>> offer_ids = ["136748", "73309"]
         >>> create_stocks(watch_remnants, offer_ids)
         >>> [{"offer_id": "136748", "stock": 0}, {"offer_id": "73309", "stock": 2}]
 
@@ -226,7 +260,7 @@ def create_stocks(watch_remnants, offer_ids):
 
     Пример:
         >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': '2O', 'Заказ': ''}]
-        >>> offer_ids = [{"product_id": "223681945", "offer_id": "136748"}, {"product_id": "223681946", "offer_id": "73309"}]
+        >>> offer_ids = ["136748", "73309"]
         >>> create_stocks(watch_remnants, offer_ids)
         >>> ValueError: invalid literal for int() with base 10: '2O'
 
@@ -251,6 +285,23 @@ def create_stocks(watch_remnants, offer_ids):
 
 
 def create_prices(watch_remnants, offer_ids):
+    """Готовим список для обновления прайса
+
+    Готовим список словарей для обновления прайса в магазине Озон
+
+    Args:
+        watch_remnants (list): остатки товара в магазине часов
+        offer_ids (list): список товара в магазине Озон
+
+    Return:
+        list: Актуализированная стоимость товара.
+
+    Пример:
+        >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 2, 'Заказ': ''}]
+        >>> offer_ids = ["136748",  "73309"]
+        >>> create_prices(watch_remnants, offer_ids)
+        >>> [{"auto_action_enabled": "UNKNOWN", "currency_code": "RUB", "offer_id": "73309", "old_price": "0", "price": "38440"}]
+    """
     prices = []
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
@@ -280,7 +331,7 @@ def price_conversion(price: str) -> str:
     Пример:
         >>> price = "5'990.00 руб."
         >>> price_conversion(price)
-        >>> '5990'
+        >>> "5990"
 
     Raises:
         AttributeError: object has no attribute 'split' (если на входе
