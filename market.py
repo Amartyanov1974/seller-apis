@@ -11,7 +11,124 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(page, campaign_id, access_token):
-    """ """
+    """Получение списка товаров
+
+    Используя методы API Яндекс Маркета получаем список товаров.
+
+    Args:
+        page (str): идентификатор страницы c результатами.
+                    Если параметр не указан, возвращается
+                    самая старая страница.
+        campaign_id (int): идентификатор компании в API Яндекс Маркет.
+        access_token (str): токен для авторизации для запросов к Маркету.
+
+    Return:
+        dict: Список товаров.
+
+    Пример:
+        >>> get_product_list(page, campaign_id, access_token)
+        >>> {
+        >>>     "paging": {
+        >>>         "nextPageToken": "string",
+        >>>         "prevPageToken": "string"
+        >>>     },
+        >>>     "offerMappingEntries": [
+        >>>         {
+        >>>             "offer": {
+        >>>                 "name": "Ударная дрель Makita HP1630, 710 Вт",
+        >>>                 "shopSku": "string",
+        >>>                 "category": "string",
+        >>>                 "vendor": "LEVENHUK",
+        >>>                 "vendorCode": "VNDR-0005A",
+        >>>                 "description": "string",
+        >>>                 "id": "string",
+        >>>                 "feedId": 0,
+        >>>                 "barcodes": [
+        >>>                     46012300000000
+        >>>                 ],
+        >>>                 "urls": [
+        >>>                     "string"
+        >>>                 ],
+        >>>                 "pictures": [
+        >>>                     "string"
+        >>>                 ],
+        >>>                 "manufacturer": "string",
+        >>>                 "manufacturerCountries": [
+        >>>                     "string"
+        >>>                 ],
+        >>>                 "minShipment": 0,
+        >>>                 "transportUnitSize": 0,
+        >>>                 "quantumOfSupply": 0,
+        >>>                 "deliveryDurationDays": 0,
+        >>>                 "boxCount": 0,
+        >>>                 "customsCommodityCodes": [
+        >>>                     "string"
+        >>>                 ],
+        >>>                 "weightDimensions": {
+        >>>                     "length": 65.55,
+        >>>                     "width": 50.7,
+        >>>                     "height": 20,
+        >>>                     "weight": 1.001
+        >>>                 },
+        >>>                 "supplyScheduleDays": [
+        >>>                     "MONDAY"
+        >>>                 ],
+        >>>                 "shelfLifeDays": 0,
+        >>>                 "lifeTimeDays": 0,
+        >>>                 "guaranteePeriodDays": 0,
+        >>>                 "processingState": {
+        >>>                     "status": "UNKNOWN",
+        >>>                     "notes": [
+        >>>                         {
+        >>>                             "type": "ASSORTMENT",
+        >>>                             "payload": "string"
+        >>>                         }
+        >>>                     ]
+        >>>                 },
+        >>>                 "availability": "ACTIVE",
+        >>>                 "shelfLife": {
+        >>>                     "timePeriod": 0,
+        >>>                     "timeUnit": "HOUR",
+        >>>                     "comment": "string"
+        >>>                 },
+        >>>                 "lifeTime": {
+        >>>                     "timePeriod": 0,
+        >>>                     "timeUnit": "HOUR",
+        >>>                     "comment": "string"
+        >>>                 },
+        >>>                 "guaranteePeriod": {
+        >>>                     "timePeriod": 0,
+        >>>                     "timeUnit": "HOUR",
+        >>>                     "comment": "string"
+        >>>                 },
+        >>>                 "certificate": "string",
+        >>>                 "price": 0
+        >>>             },
+        >>>             "mapping": {
+        >>>                 "marketSku": 0,
+        >>>                 "modelId": 0,
+        >>>                 "categoryId": 0
+        >>>             },
+        >>>             "awaitingModerationMapping": {
+        >>>                 "marketSku": 0,
+        >>>                 "modelId": 0,
+        >>>                 "categoryId": 0
+        >>>             },
+        >>>             "rejectedMapping": {
+        >>>                 "marketSku": 0,
+        >>>                 "modelId": 0,
+        >>>                 "categoryId": 0
+        >>>             }
+        >>>         }
+        >>>     ]
+        >>> }
+
+    Raises:
+        HTTPError: 404 (если сервер будет недоступен).
+    Пример:
+        >>> get_product_list(page, campaign_id, access_token)
+        >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url
+    """
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -31,7 +148,44 @@ def get_product_list(page, campaign_id, access_token):
 
 
 def update_stocks(stocks, campaign_id, access_token):
-    """ """
+    """Обновляем остатки в магазине Яндекс Маркет
+
+    Используя методы API Яндекс Маркет обновляем информацию
+    о количестве товара в наличии. За один запрос можно изменить
+    наличие для 100 товаров.
+
+    Args:
+        stocks (list): список количества остатков.
+        campaign_id (int): идентификатор компании в API Яндекс Маркет.
+        access_token (str): токен для авторизации для запросов к Маркету.
+
+    Return:
+        dict: Словарь с результатами обновления.
+
+    Пример:
+        >>> stocks = [{"sku": "73309", "warehouseId": "string", "items": [{"count": 2, "type": "FIT", "updatedAt": "2022-12-29T18:02:01Z",}],}]
+        >>> update_stocks(stocks, campaign_id, access_token)
+        >>> {
+        >>>     "skus": [
+        >>>         {
+        >>>             "sku": "73309",
+        >>>             "items": [
+        >>>                 {
+        >>>                     "count": 2,
+        >>>                     "updatedAt": "2022-12-29T18:02:01Z"
+        >>>                 }
+        >>>             ]
+        >>>         }
+        >>>     ]
+        >>> }
+
+    Raises:
+        HTTPError: 404 (если сервер будет недоступен).
+    Пример:
+        >>> update_stocks(stocks, campaign_id, access_token)
+        >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url
+
+    """
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -48,6 +202,41 @@ def update_stocks(stocks, campaign_id, access_token):
 
 
 def update_price(prices, campaign_id, access_token):
+    """Обновляем стоимость товаров
+
+    Используя методы API Яндекс Маркета обновляем информацию
+    о стоимости товара.
+
+    Args:
+        prices (list): список количества остатков.
+        campaign_id (int): идентификатор компании в API Яндекс Маркет.
+        access_token (str): токен для авторизации для запросов к Маркету.
+
+    Return:
+        dict: Словарь с результатами обновления.
+
+    Пример:
+        >>> stocks = [{"id": "73309", "price": {"value": 38440, "currencyId": "RUR",},}]
+        >>> update_price(prices, campaign_id, access_token)
+        >>> {
+        >>>     "offers": [
+        >>>         {
+        >>>             "offerId": "73309",
+        >>>             "price": {
+        >>>                 "value": 38440,
+        >>>                 "currencyId": "RUR",
+        >>>                 "discountBase": 0
+        >>>             }
+        >>>         }
+        >>>     ]
+        >>> }
+
+    Raises:
+        HTTPError: 404 (если сервер будет недоступен).
+    Пример:
+        >>> update_price(prices, campaign_id, access_token)
+        >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url
+    """
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -64,7 +253,29 @@ def update_price(prices, campaign_id, access_token):
 
 
 def get_offer_ids(campaign_id, market_token):
-    """Получить артикулы товаров Яндекс маркета"""
+    """Получаем артикулы товаров Яндекс маркета
+
+    Из списка товаров извлекаем артикулы товара.
+
+    Args:
+        campaign_id (int): идентификатор компании в API Яндекс Маркет.
+        market_token (str): токен для авторизации для запросов к Маркету.
+
+    Return:
+        list: Список товаров.
+
+    Пример:
+        >>> get_offer_ids(campaign_id, market_token)
+        >>> ["136748"]
+
+    Raises:
+        AttributeError: 'NoneType' object has no attribute 'get'
+        если функция get_product_list вернет None
+
+    Пример:
+        >>> get_offer_ids(campaign_id, market_token)
+        >>> AttributeError: 'NoneType' object has no attribute 'get'
+    """
     page = ""
     product_list = []
     while True:
@@ -80,6 +291,35 @@ def get_offer_ids(campaign_id, market_token):
 
 
 def create_stocks(watch_remnants, offer_ids, warehouse_id):
+    """Актуализируем остатки товара
+
+    Оставляем в списке товара только те позиции, которые присутствуют
+    в Яндекс Маркет и добавляем отсутствующие позиции в остатки из
+    имеющихся в Маркете.
+
+    Args:
+        watch_remnants (list): остатки товара в магазине часов
+        offer_ids (list): список товара в магазине Озон
+
+    Return:
+        list: Актуализированные остатки товара.
+
+    Пример:
+        >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 2, 'Заказ': ''}]
+        >>> offer_ids = ["73309"]
+        >>> create_stocks(watch_remnants, offer_ids, warehouse_id)
+        >>> [{"sku": "73309", "warehouseId": "string", "items": [{"count": 2, "type": "FIT", "updatedAt": "string",}],}]
+
+    Raises:
+        ValueError: Если в "Количестве" будут не только цифры
+
+    Пример:
+        >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': '2O', 'Заказ': ''}]
+        >>> offer_ids = ["136748", "73309"]
+        >>> create_stocks(watch_remnants, offer_ids, warehouse_id)
+        >>> ValueError: invalid literal for int() with base 10: '2O'
+
+    """
     # Уберем то, что не загружено в market
     stocks = list()
     date = str(datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z")
@@ -125,6 +365,24 @@ def create_stocks(watch_remnants, offer_ids, warehouse_id):
 
 
 def create_prices(watch_remnants, offer_ids):
+    """Готовим список для обновления прайса
+
+    Готовим список словарей для обновления прайса в Яндекс Маркете
+
+    Args:
+        watch_remnants (list): остатки товара в магазине часов
+        offer_ids (list): список товара в Яндекс Маркете
+
+    Return:
+        list: Актуализированная стоимость товара.
+
+    Пример:
+        >>> watch_remnants = [{'Код': 73309, 'Наименование товара': 'BM7334-66L', 'Изображение': 'Показать', 'Цена': "38'440.00 руб.", 'Количество': 2, 'Заказ': ''}]
+        >>> offer_ids = ["136748",  "73309"]
+        >>> create_prices(watch_remnants, offer_ids)
+        >>> [{"auto_action_enabled": "UNKNOWN", "currency_code": "RUB", "offer_id": "73309", "old_price": "0", "price": "38440"}]
+        >>> [{"id": "73309", "price": {"value": 38440, "currencyId": "RUR",},}]
+    """
     prices = []
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
@@ -145,6 +403,8 @@ def create_prices(watch_remnants, offer_ids):
 
 
 async def upload_prices(watch_remnants, campaign_id, market_token):
+    """Функция в работе программы участия не принимает"""
+
     offer_ids = get_offer_ids(campaign_id, market_token)
     prices = create_prices(watch_remnants, offer_ids)
     for some_prices in list(divide(prices, 500)):
@@ -153,6 +413,8 @@ async def upload_prices(watch_remnants, campaign_id, market_token):
 
 
 async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id):
+    """Функция в работе программы участия не принимает"""
+
     offer_ids = get_offer_ids(campaign_id, market_token)
     stocks = create_stocks(watch_remnants, offer_ids, warehouse_id)
     for some_stock in list(divide(stocks, 2000)):
